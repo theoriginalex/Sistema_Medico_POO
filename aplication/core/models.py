@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from doctor.utils import valida_cedula,phone_regex
 
       
+      
+      
 """Modelo que representa los diferentes tipos de sangre.
 Se gestiona como un modelo separado para mantener flexibilidad
 y permitir futuras actualizaciones."""

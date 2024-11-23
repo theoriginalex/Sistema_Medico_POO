@@ -191,3 +191,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'alexcchica02@gmail.com'  # Cambia esto a tu correo
 EMAIL_HOST_PASSWORD = 'Alan0961234059'  # Cambia esto a tu contraseña de la cuenta de Gmail
 
+
+
+
