@@ -1,0 +1,31 @@
+<!-- Modal para mostrar los detalles del Certificado -->
+<div class="modal fade" id="certificadoModal" tabindex="-1" aria-labelledby="certificadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary bg-opacity-75">
+                <h5 class="modal-title text-white fw-bold" id="certificadoModalLabel">
+                    <i class="fas fa-certificate me-2"></i>Detalles del Certificado
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>ID:</strong> <span id="certificado-id"></span></p>
+                <p><strong>Paciente:</strong> <span id="certificado-paciente"></span></p>
+                <p><strong>Doctor:</strong> <span id="certificado-doctor"></span></p>
+                <p><strong>Fecha de Emisión:</strong> <span id="certificado-fecha-emision"></span></p>
+                <p><strong>Motivo/Diagnóstico:</strong> <span id="certificado-motivo"></span></p>
+                <p><strong>Descripción Adicional:</strong> <span id="certificado-descripcion"></span></p>
+                <p><strong>Duración de Reposo:</strong> <span id="certificado-duracion-reposo"></span></p>
+                <p><strong>Estado:</strong> <span id="certificado-activo"></span></p>
+                <p><strong>Firma:</strong> 
+                    <img id="certificado-firma" style="max-width: 100px; max-height: 100px; display: none;" />
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

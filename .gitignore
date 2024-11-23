@@ -1,0 +1,6 @@
+# Entorno virtual
+venv/
+
+# Base de datos SQLite
+db.sqlite3
+

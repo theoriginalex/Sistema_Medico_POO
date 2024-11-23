@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">
+        {% if form.instance.pk %}
+            Editar Ficha Clínica
+        {% else %}
+            Crear Nueva Ficha Clínica
+        {% endif %}
+    </h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="id_paciente" class="form-label">Paciente</label>
+            {{ form.paciente|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_doctor" class="form-label">Doctor</label>
+            {{ form.doctor|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_fecha_consulta" class="form-label">Fecha de Consulta</label>
+            {{ form.fecha_consulta|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_motivo_consulta" class="form-label">Motivo de la Consulta</label>
+            {{ form.motivo_consulta|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_observaciones" class="form-label">Observaciones</label>
+            {{ form.observaciones|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_diagnostico" class="form-label">Diagnóstico</label>
+            {{ form.diagnostico|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_tratamiento" class="form-label">Tratamiento</label>
+            {{ form.tratamiento|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_procedimientos" class="form-label">Procedimientos Realizados</label>
+            {{ form.procedimientos|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_receta" class="form-label">Receta Médica</label>
+            {{ form.receta|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_adjuntos" class="form-label">Adjuntos</label>
+            {{ form.adjuntos|as_widget(attrs={'class': 'form-control'}) }}
+        </div>
+
+        <div class="mb-3 form-check">
+            <label class="form-check-label" for="id_activo">
+                {{ form.activo }} Activa
+            </label>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">
+                {% if form.instance.pk %}
+                    Actualizar Ficha Clínica
+                {% else %}
+                    Crear Ficha Clínica
+                {% endif %}
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-3 text-center">
+        <a href="{% url 'core:ficha_clinica_list' %}" class="btn btn-secondary">Volver al Listado</a>
+    </div>
+</div>
+{% endblock %}

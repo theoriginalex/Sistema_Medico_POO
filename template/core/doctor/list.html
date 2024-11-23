@@ -1,0 +1,229 @@
+{% extends "components/base.html" %}
+{% block content %}
+<div class="container-fluid">
+<div class="row">
+
+    <!-- Doctor List Content -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="card-title mb-0 text-primary-emphasis fw-bold">{{title1}}</h3>
+           </div>
+
+        <!-- Search and Filter -->
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between g-3 mb-4">
+        <form method="GET" action="{% url 'core:doctor_list' %}" class="d-flex flex-column flex-md-row gap-3 align-items-md-center">
+            <div class="col-md-6">
+            <input type="text" name="q" class="form-control search-box" value="{{ request.GET.q }}" placeholder="Buscar doctor...">
+            </div>
+            <div class="col-md-6">
+            <select class="form-select" name="specialty">
+                <option value="T">Todas las especialidades</option>
+                <option value="Cardiología">Cardiología</option>
+                <option value="Dermatología">Dermatología</option>
+                <option value="Pediatría">Pediatría</option>
+                <!-- Agrega más especialidades según sea necesario -->
+            </select>
+            </div>
+            </form>
+            <a class="btn btn-primary mt-3 mt-md-0" href="{% url 'core:doctor_create' %}">
+                <i class="fas fa-plus me-2"></i>Nuevo Doctor
+            </a>
+        </div>
+
+        <!-- Doctor Table -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                <th>Doctor</th>
+                <th>Código Único</th>
+                <th>Especialidad</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in doctores %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="{{item.get_image}}" class="rounded-circle me-3" width="30px">
+                            <div>
+                                <div class="fw-bold">{{item.nombre_completo}}</div>
+                                <small class="text-muted">{{item.id}}</small>
+                            </div>
+                        </div>
+                    </td>
+                <td>{{ item.codigoUnicoDoctor }}</td>
+                <td>
+                    {% for especialidad in item.especialidad.all %}
+                        <span class="badge bg-primary">{{ especialidad.nombre }}</span>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% if item.activo %}
+                        <span class="badge bg-success">Activo</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactivo</span>
+                    {% endif %}
+                </td>
+
+                
+
+                
+                <td>
+                    <div class="action-buttons d-flex gap-2">
+                    <button class="btn btn-info btn-sm" title="Detalle Doctor"
+                        onclick="verDoctor('{{ item.id }}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <a href="{% url 'core:doctor_update' item.id %}" class="btn btn-info btn-sm text-white" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    {% with id=item.id name=item.nombres msg="Esta seguro de eliminar al doctor:" %}
+                        <button class="btn btn-danger" onclick="confirmDelete('{{ id }}','{{ name }}','{{ msg|escapejs }}');"> <i class="fa-solid fa-trash"></i></button>
+                    {% endwith %}
+                    </div>
+                </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="d-flex justify-content-between align-items-center mt-4">
+            <p class="text-muted mb-0">{{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} doctores</p>
+            <ul class="pagination mb-0">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                <a class="page-link" href="?page=1"><i class="fas fa-chevron-left"></i></a>
+                </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-chevron-right"></i></a>
+                </li>
+            {% endif %}
+            </ul>
+        </nav>
+        <!-- Fin de Pagination -->
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- llama al modal generico de eliminacion -->
+{% include 'includes/confirm_delete_modal.html' %}
+<!-- llama al modal de mostrar datos del detalle del doctor -->
+{% include 'core/doctor/includes/detail_modal.html' %}
+
+{% endblock content %}
+{% block js %}
+<script>
+/* funciones del modal eliminar*/
+function confirmDelete(id, name, msg) {
+    // Actualiza el mensaje del modal
+    document.getElementById('modalMessage').innerText = `${msg} ${name}`;
+
+    // Actualiza la acción del formulario
+    const form = document.getElementById('deleteForm');
+    form.action = `/doctor_delete/${id}/`; // Ajusta la URL según tu configuración
+
+    // Muestra el modal
+    const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+    modal.show();
+}
+function closeModal() {
+    const modalElement = document.getElementById('confirmDeleteModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+    modalInstance.hide();
+    }
+}
+/* funciones del modal detalle */
+function verDoctor(id) {
+    fetch(`/doctor_detail/${id}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('No se pudo obtener la información del doctor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Verifica y actualiza los campos dinámicamente
+            document.getElementById('doctor-id').innerText = data.id;
+            document.getElementById('doctor-nombres').innerText = data.nombres;
+            document.getElementById('doctor-apellidos').innerText = data.apellidos;
+            document.getElementById('doctor-foto').src = data.foto;
+            document.getElementById('doctor-especialidad').innerText = data.especialidad.join(', ');
+            document.getElementById('doctor-telefono').innerText = data.telefono;
+            document.getElementById('doctor-email').innerText = data.email;
+            document.getElementById('doctor-cedula').innerText = data.cedula;
+            document.getElementById('doctor-fecha_nacimiento').innerText = data.fecha_nacimiento;
+            document.getElementById('doctor-edad').innerText = data.edad;
+            document.getElementById('doctor-direccion').innerText = data.direccion;
+            document.getElementById('doctor-codigoUnicoDoctor').innerText = data.codigoUnicoDoctor;
+            document.getElementById('doctor-horario_atencion').innerText = data.horario_atencion;
+            document.getElementById('doctor-duracion_cita').innerText = data.duracion_cita;
+
+            // Actualiza los enlaces de descarga
+            const curriculumLink = document.getElementById('doctor-curriculum');
+            if (data.curriculum) {
+                curriculumLink.href = data.curriculum;
+                curriculumLink.style.display = 'inline'; // Muestra el enlace si existe
+            } else {
+                curriculumLink.style.display = 'none'; // Oculta si no hay archivo
+            }
+
+            const firmaDigitalLink = document.getElementById('doctor-firmaDigital');
+            if (data.firmaDigital) {
+                firmaDigitalLink.href = data.firmaDigital;
+                firmaDigitalLink.style.display = 'inline';
+            } else {
+                firmaDigitalLink.style.display = 'none';
+            }
+
+            // Actualiza la imagen de receta
+            const recetaImg = document.getElementById('doctor-imagen_receta');
+            if (data.imagen_receta) {
+                recetaImg.src = data.imagen_receta;
+                recetaImg.style.display = 'block'; // Muestra la imagen
+            } else {
+                recetaImg.style.display = 'none'; // Oculta si no hay imagen
+            }
+            // Mostrar el modal
+            const modal = new bootstrap.Modal(document.getElementById('doctorModal'));
+            modal.show();
+
+            // Crear el mapa después de que el modal se haya mostrado
+            modal._element.addEventListener('shown.bs.modal', function () {
+                // Inicializar el mapa con las coordenadas
+                const latitud = parseFloat(data.latitud);
+                const longitud = parseFloat(data.longitud);
+                const myLatLng = { lat: latitud, lng: longitud };
+
+                const map = new google.maps.Map(document.getElementById('map-container'), {
+                    center: myLatLng,
+                    zoom: 15
+                });
+
+                new google.maps.Marker({
+                    position: myLatLng,
+                    map: map,
+                    title: `${data.nombres} ${data.apellidos}`
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los datos del doctor.');
+        });
+}
+
+</script>
+{% endblock %}
